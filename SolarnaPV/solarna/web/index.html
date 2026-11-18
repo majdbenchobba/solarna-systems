@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#073b41">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Solarna PV">
+  <link rel="manifest" href="/manifest.webmanifest?v=44">
+  <link rel="icon" href="/favicon.svg?v=44" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png?v=44">
+  <link rel="stylesheet" href="/app.css?v=44">
+  <title>Solarna Systems · PV orientation optimizer</title>
+</head>
+<body class="auth-pending">
+  <header class="hero">
+    <nav class="nav wrap" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Solarna Systems home">
+        <img class="brand-mark" src="/solarna-mark.svg?v=44" alt="" width="40" height="40">
+        <span>Solarna Systems</span>
+      </a>
+      <div class="nav-actions">
+        <label class="language-control">
+          <span class="sr-only" data-i18n="language">Language</span>
+          <select data-language-select aria-label="Language">
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+            <option value="ar">AR</option>
+          </select>
+        </label>
+        <button id="connection-status" class="status-pill" type="button"
+                data-i18n="connecting">Connecting…</button>
+        <button id="logout-button" class="button ghost hidden" type="button"
+                data-i18n="logout">Log out</button>
+        <a id="android-download-link" class="button ghost hidden"
+           href="/downloads/solarna-android.apk" download
+           data-i18n="android">Android</a>
+        <button id="install-button" class="button ghost hidden" type="button"
+                data-i18n="install">Install</button>
+      </div>
+    </nav>
+    <div id="top" class="hero-content wrap">
+      <p class="eyebrow" data-i18n="solar_orientation">Solar orientation</p>
+      <h1 data-i18n="hero_title">Plan fixed solar systems with confidence.</h1>
+      <p class="lede" data-i18n="hero_lede">Orientation, production, losses and validation for Tunisia.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel form-panel" aria-labelledby="optimizer-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="new_calculation">New calculation</p>
+          <h2 id="optimizer-title" data-i18n="system_setup">Project setup</h2>
+        </div>
+        <button id="locate-button" class="button secondary" type="button"
+                data-i18n="use_location">Use my location</button>
+      </div>
+
+      <div id="saved-reports" class="saved-reports hidden">
+        <label>
+          <span data-i18n="my_projects">My projects</span>
+          <select id="saved-report-select"></select>
+        </label>
+        <button id="load-saved-report" class="button secondary" type="button">
+          <span data-i18n="load_report">Load report</span>
+        </button>
+        <p id="project-storage-status" class="storage-status full"></p>
+      </div>
+
+      <form id="optimizer-form">
+        <fieldset>
+          <legend data-i18n="site">Site</legend>
+          <div class="form-grid">
+            <label class="wide">
+              <span data-i18n="tunisia_location">Tunisia location</span>
+              <select id="preset">
+                <optgroup label="Tunisia governorate capitals" data-i18n-label="capitals">
+                  <option value="ariana">Ariana</option>
+                  <option value="beja">Beja</option>
+                  <option value="ben-arous">Ben Arous</option>
+                  <option value="bizerte">Bizerte</option>
+                  <option value="gabes">Gabes</option>
+                  <option value="gafsa">Gafsa</option>
+                  <option value="jendouba">Jendouba</option>
+                  <option value="kairouan">Kairouan</option>
+                  <option value="kasserine">Kasserine</option>
+                  <option value="kebili">Kebili</option>
+                  <option value="le-kef">Le Kef</option>
+                  <option value="mahdia">Mahdia</option>
+                  <option value="manouba">Manouba</option>
+                  <option value="medenine">Medenine</option>
+                  <option value="monastir">Monastir</option>
+                  <option value="nabeul">Nabeul</option>
+                  <option value="sfax" selected>Sfax</option>
+                  <option value="sidi-bouzid">Sidi Bouzid</option>
+                  <option value="siliana">Siliana</option>
+                  <option value="sousse">Sousse</option>
+                  <option value="tataouine">Tataouine</option>
+                  <option value="tozeur">Tozeur</option>
+                  <option value="tunis">Tunis</option>
+                  <option value="zaghouan">Zaghouan</option>
+                </optgroup>
+                <optgroup label="Additional research location" data-i18n-label="additional_location">
+                  <option value="djerba">Djerba</option>
+                </optgroup>
+                <option value="custom" data-i18n="custom_coordinates">Custom coordinates</option>
+              </select>
+            </label>
+            <label class="wide">
+              <span data-i18n="project_name">Project name</span>
+              <input id="name" name="name" value="Sfax (governorate capital)"
+                     maxlength="120" required>
+            </label>
+            <label>
+              <span data-i18n="latitude">Latitude</span>
+              <input id="latitude" name="latitude" type="number" value="34.74056"
+                     min="-90" max="90" step="0.00001" required inputmode="decimal">
+            </label>
+            <label>
+              <span data-i18n="longitude">Longitude</span>
+              <input id="longitude" name="longitude" type="number" value="10.76028"
+                     min="-180" max="180" step="0.00001" required inputmode="decimal">
+            </label>
+            <label>
+              <span data-i18n="elevation">Elevation</span>
+              <select id="elevation-mode">
+                <option value="pvgis" selected data-i18n="pvgis_terrain">PVGIS terrain · recommended</option>
+                <option value="manual" data-i18n="manual_entry">Enter manually</option>
+              </select>
+            </label>
+            <label id="altitude-field" class="hidden">
+              <span data-i18n="manual_elevation">Manual elevation</span>
+              <span class="input-unit"><input id="altitude" name="altitude" type="number"
+                value="0" min="-500" max="9000" step="1"><b>m</b></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="pv_system">PV system</legend>
+          <div class="form-grid">
+            <label id="inverter-model-field">
+              <span data-i18n="inverter">Inverter</span>
+              <select id="inverter-model" required>
+                <option value="sungrow-sg4rs" selected>Sungrow SG4.0RS</option>
+                <option value="custom" data-i18n="custom_inverter">Custom inverter</option>
+              </select>
+            </label>
+            <label id="panel-model-field">
+              <span data-i18n="panel_model">Panel model</span>
+              <select id="panel-model" required>
+                <option value="custom" selected data-i18n="custom_panel">Custom panel</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="size_input">System size input</span>
+              <select id="system-size-mode">
+                <option value="panels" selected data-i18n="panel_details">Panel details</option>
+                <option value="capacity" data-i18n="total_dc_capacity">Total DC capacity</option>
+                <option value="normalized" data-i18n="size_unknown">System size unknown</option>
+              </select>
+            </label>
+            <label id="panel-count-field">
+              <span data-i18n="panel_count">Number of panels</span>
+              <input id="panel-count" type="number" min="1" max="100000"
+                     step="1" placeholder="e.g. 10" required inputmode="numeric">
+            </label>
+            <label id="panel-power-field">
+              <span data-i18n="panel_power">Power per panel</span>
+              <span class="input-unit"><input id="panel-power" type="number"
+                min="1" max="5000" step="1" placeholder="e.g. 450"
+                required inputmode="numeric"><b>W</b></span>
+            </label>
+            <label id="capacity-field">
+              <span data-i18n="dc_capacity">Panel capacity (DC)</span>
+              <span class="input-unit"><input id="capacity" type="number"
+                min="0.05" max="100000" step="0.001" required readonly><b>kWp</b></span>
+            </label>
+            <label id="inverter-ac-rating-field">
+              <span data-i18n="ac_limit">Inverter output limit (AC)</span>
+              <span class="input-unit"><input id="inverter-ac-rating" type="number" value="4"
+                min="0.02" max="100000" step="0.01" required><b>kW</b></span>
+            </label>
+            <label>
+              <span data-i18n="mounting_type">Mounting type</span>
+              <select id="temperature-model">
+                <option value="open_rack_glass_glass" selected data-i18n="open_glass_glass">Open rack · glass/glass</option>
+                <option value="open_rack_glass_polymer" data-i18n="ventilated_backsheet">Ventilated rails · glass/backsheet</option>
+                <option value="close_mount_glass_glass" data-i18n="roof_glass_glass">Roof mount · glass/glass</option>
+                <option value="insulated_back_glass_polymer" data-i18n="limited_backsheet">Limited rear airflow · glass/backsheet</option>
+              </select>
+            </label>
+            <p class="hint full" data-i18n="airflow_help">Choose by airflow behind the panels. Raised roof rails normally use the ventilated option.</p>
+            <div id="equipment-catalog" class="equipment-cards full"
+                 data-i18n-aria-label="equipment_catalog" aria-label="Selected equipment">
+              <article id="panel-spec-card" class="equipment-card">
+                <span class="equipment-label" data-i18n="panel_specification">Panel specification</span>
+                <strong id="panel-spec-title">Custom panel</strong>
+                <p id="panel-spec-details"></p>
+                <a id="panel-datasheet-link" class="datasheet-link hidden"
+                   href="#" target="_blank" rel="noopener"
+                   data-i18n="datasheet">Technical source</a>
+              </article>
+              <article id="inverter-spec-card" class="equipment-card">
+                <span class="equipment-label" data-i18n="inverter_specification">Inverter specification</span>
+                <strong id="inverter-spec-title">Sungrow SG4.0RS</strong>
+                <p id="inverter-spec-details"></p>
+                <a id="inverter-datasheet-link" class="datasheet-link hidden"
+                   href="#" target="_blank" rel="noopener"
+                   data-i18n="datasheet">Technical source</a>
+              </article>
+            </div>
+            <p id="system-size-summary" class="system-summary full" aria-live="polite"></p>
+          </div>
+        </fieldset>
+
+        <details class="advanced">
+          <summary data-i18n="advanced">Engineering settings</summary>
+          <div class="form-grid details-grid">
+            <label class="wide">
+              <span data-i18n="analysis_mode">Analysis mode</span>
+              <select id="analysis-profile">
+                <option value="quick" data-i18n="quick">Quick</option>
+                <option value="standard" selected data-i18n="standard">Standard</option>
+                <option value="detailed" data-i18n="detailed">Detailed</option>
+                <option value="historical" data-i18n="historical">Historical</option>
+                <option value="custom" data-i18n="custom">Custom</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="ground_albedo">Ground reflectance</span>
+              <input id="albedo" type="number" value="0.2"
+                     min="0" max="1" step="0.01" required>
+            </label>
+            <label>
+              <span data-i18n="loss_mode">Loss model</span>
+              <select id="loss-mode">
+                <option value="simple" selected data-i18n="simple_losses">Simple estimate</option>
+                <option value="engineering" data-i18n="engineering_losses">Detailed engineering losses</option>
+              </select>
+            </label>
+            <label id="loss-preset-field">
+              <span data-i18n="additional_losses">Additional losses</span>
+              <select id="loss-preset">
+                <option value="0" selected data-i18n="none">None · 0%</option>
+                <option value="3" data-i18n="low">Low · 3%</option>
+                <option value="7" data-i18n="typical">Typical · 7%</option>
+                <option value="12" data-i18n="conservative">Conservative · 12%</option>
+                <option value="custom" data-i18n="custom_losses">Custom</option>
+              </select>
+            </label>
+            <label id="losses-field" class="hidden">
+              <span data-i18n="custom_additional_losses">Custom additional losses</span>
+              <span class="input-unit"><input id="losses" type="number" value="0"
+                min="0" max="80" step="0.1" required><b>%</b></span>
+            </label>
+            <div id="engineering-loss-fields" class="engineering-loss-grid full hidden">
+              <label>
+                <span data-i18n="soiling_loss">Soiling and dust</span>
+                <span class="input-unit"><input id="loss-soiling" type="number"
+                  value="2" min="0" max="50" step="0.1"><b>%</b></span>
+              </label>
+              <label>
+                <span data-i18n="shading_loss">Near shading</span>
+                <span class="input-unit"><input id="loss-shading" type="number"
+                  value="0" min="0" max="50" step="0.1"><b>%</b></span>
+              </label>
+              <label>
+                <span data-i18n="mismatch_loss">Module mismatch</span>
+                <span class="input-unit"><input id="loss-mismatch" type="number"
+                  value="1.5" min="0" max="50" step="0.1"><b>%</b></span>
+              </label>
+              <label>
+                <span data-i18n="wiring_loss">DC wiring</span>
+                <span class="input-unit"><input id="loss-wiring" type="number"
+                  value="1.5" min="0" max="50" step="0.1"><b>%</b></span>
+              </label>
+              <label>
+                <span data-i18n="availability_loss">Availability and downtime</span>
+                <span class="input-unit"><input id="loss-availability" type="number"
+                  value="1" min="0" max="50" step="0.1"><b>%</b></span>
+              </label>
+              <label>
+                <span data-i18n="quality_loss">Module quality and initial degradation</span>
+                <span class="input-unit"><input id="loss-quality" type="number"
+                  value="1" min="0" max="50" step="0.1"><b>%</b></span>
+              </label>
+            </div>
+            <p id="loss-summary" class="system-summary full hidden" aria-live="polite"></p>
+            <label>
+              <span data-i18n="temperature_coefficient">Temperature coefficient</span>
+              <span class="input-unit"><input id="gamma-pdc" type="number" value="-0.4"
+                min="-2" max="0" step="0.01" required><b>%/°C</b></span>
+            </label>
+            <label>
+              <span data-i18n="inverter_efficiency">Nominal inverter efficiency</span>
+              <span class="input-unit"><input id="inverter-efficiency" type="number" value="97.2"
+                min="80" max="100" step="0.1" required><b>%</b></span>
+            </label>
+            <label>
+              <span data-i18n="search_spacing">Search spacing</span>
+              <select id="coarse-step">
+                <option value="30">30° · fastest</option>
+                <option value="15">15° · fast</option>
+                <option value="10" selected>10° · standard</option>
+                <option value="5">5° · detailed</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="refinement_spacing">Refinement spacing</span>
+              <select id="fine-step">
+                <option value="1" selected>1° · standard</option>
+                <option value="0.5">0.5° · detailed</option>
+              </select>
+            </label>
+            <label class="wide">
+              <span data-i18n="period">Period</span>
+              <select id="period-analysis">
+                <option value="none" selected data-i18n="annual">Annual</option>
+                <option value="winter" data-i18n="winter">Winter · November–March</option>
+                <option value="summer" data-i18n="summer">Summer · June–August</option>
+                <option value="spring" data-i18n="spring">Spring · March–May</option>
+                <option value="autumn" data-i18n="autumn">Autumn · September–November</option>
+                <option value="custom" data-i18n="choose_months">Choose months</option>
+              </select>
+            </label>
+            <div id="custom-months-field" class="month-selector full hidden"
+                 role="group" aria-label="Months to optimize">
+              <span data-i18n="months">Months</span>
+              <div>
+                <label><input id="period-month-1" type="checkbox" value="1">Jan</label>
+                <label><input id="period-month-2" type="checkbox" value="2">Feb</label>
+                <label><input id="period-month-3" type="checkbox" value="3">Mar</label>
+                <label><input id="period-month-4" type="checkbox" value="4">Apr</label>
+                <label><input id="period-month-5" type="checkbox" value="5">May</label>
+                <label><input id="period-month-6" type="checkbox" value="6">Jun</label>
+                <label><input id="period-month-7" type="checkbox" value="7">Jul</label>
+                <label><input id="period-month-8" type="checkbox" value="8">Aug</label>
+                <label><input id="period-month-9" type="checkbox" value="9">Sep</label>
+                <label><input id="period-month-10" type="checkbox" value="10">Oct</label>
+                <label><input id="period-month-11" type="checkbox" value="11">Nov</label>
+                <label><input id="period-month-12" type="checkbox" value="12">Dec</label>
+              </div>
+            </div>
+            <label class="check-row wide">
+              <input id="timing-sensitivity" type="checkbox">
+              <span data-i18n="timing_comparison">Run timing sensitivity comparison</span>
+            </label>
+            <label class="check-row wide">
+              <input id="pvgis-benchmark" type="checkbox" checked>
+              <span data-i18n="pvgis_comparison">Compare with PVGIS</span>
+            </label>
+            <label class="check-row wide">
+              <input id="historical-range" type="checkbox">
+              <span data-i18n="historical_range">Historical range · 2005–2023</span>
+            </label>
+            <label class="check-row wide">
+              <input id="existing-orientation-enabled" type="checkbox">
+              <span data-i18n="current_comparison">Compare current installation</span>
+            </label>
+            <label id="existing-tilt-field" class="hidden">
+              <span data-i18n="current_tilt">Current tilt</span>
+              <span class="input-unit"><input id="existing-tilt" type="number"
+                placeholder="e.g. 30" min="0" max="90" step="0.1" inputmode="decimal"><b>°</b></span>
+            </label>
+            <label id="existing-azimuth-field" class="hidden">
+              <span data-i18n="current_direction">Current direction</span>
+              <span class="input-unit"><input id="existing-azimuth" type="number"
+                placeholder="e.g. 180" min="0" max="360" step="0.1" inputmode="decimal"><b>°</b></span>
+              <small data-i18n="south_help">180° = south</small>
+            </label>
+          </div>
+        </details>
+
+        <div class="submit-row">
+          <button id="run-button" class="button primary" type="submit"
+                  data-i18n="run_optimization">Run analysis</button>
+        </div>
+      </form>
+
+      <div id="job-status" class="job-status hidden" aria-live="polite">
+        <div class="progress-heading">
+          <strong id="job-message" data-i18n="preparing">Preparing…</strong>
+          <span id="job-percent">0%</span>
+        </div>
+        <progress id="job-progress" max="1" value="0"></progress>
+        <p id="job-detail"></p>
+      </div>
+    </section>
+
+    <section id="results" class="panel results hidden" aria-labelledby="results-title">
+      <div class="section-heading">
+        <div>
+          <p id="results-kicker" class="eyebrow" data-i18n="result">Result</p>
+          <h2 id="results-title" data-i18n="optimization_result">System result</h2>
+          <p id="results-location" class="muted"></p>
+        </div>
+        <div class="result-actions">
+          <button id="download-button" class="button secondary" type="button" data-i18n="json">JSON</button>
+          <button id="csv-button" class="button secondary" type="button" data-i18n="csv">CSV</button>
+          <button id="print-button" class="button secondary" type="button" data-i18n="print_pdf">Print / PDF</button>
+          <button id="share-button" class="button secondary hidden" type="button" data-i18n="share">Share</button>
+        </div>
+      </div>
+
+      <div class="result-cards">
+        <article>
+          <span data-i18n="tilt">Tilt</span>
+          <strong id="best-tilt">—</strong>
+          <small data-i18n="from_horizontal">from horizontal</small>
+        </article>
+        <article>
+          <span data-i18n="direction">Direction</span>
+          <strong id="best-azimuth">—</strong>
+          <small id="azimuth-description" data-i18n="clockwise_north">clockwise from true north</small>
+        </article>
+        <article class="primary-metric">
+          <span id="annual-energy-label" data-i18n="annual_energy">Annual energy</span>
+          <strong id="annual-energy">—</strong>
+          <small id="specific-yield">—</small>
+        </article>
+        <article class="primary-metric">
+          <span data-i18n="daily_output">Average daily output</span>
+          <strong id="daily-energy">—</strong>
+          <small id="daily-energy-detail" data-i18n="annual_average">annual average</small>
+        </article>
+        <article>
+          <span data-i18n="practical_setting">Practical setting</span>
+          <strong id="practical-orientation">—</strong>
+          <small id="practical-retention">—</small>
+        </article>
+        <article>
+          <span data-i18n="pvgis_agreement">PVGIS agreement</span>
+          <strong id="model-agreement">—</strong>
+          <small id="model-agreement-detail">—</small>
+        </article>
+      </div>
+
+      <div class="interpretation">
+        <h3 data-i18n="recommendation">Recommendation</h3>
+        <p id="practical-summary"></p>
+        <p id="practical-range" class="muted"></p>
+        <p id="existing-orientation-summary" class="muted hidden"></p>
+      </div>
+
+      <details class="accuracy-panel">
+        <summary data-i18n="accuracy_validation">Accuracy and validation</summary>
+        <div class="accuracy-content">
+          <p id="accuracy-summary"></p>
+          <p id="planning-range" class="muted"></p>
+          <p id="mounting-accuracy-note" class="muted hidden"></p>
+          <h4 data-i18n="improve_estimate">Improve this estimate</h4>
+          <ul id="improvement-suggestions"></ul>
+        </div>
+      </details>
+
+      <details class="study-panel">
+        <summary data-i18n="study_comparison">Tunisia research comparison</summary>
+        <div class="study-content">
+          <p id="tunisia-site-comparison"></p>
+          <p><strong data-i18n="regional_research">Regional PV research:</strong> <span data-i18n="regional_research_text">Tunisian studies cover northern, central and southern sites. Location and analysis period affect the recommended orientation.</span></p>
+          <p><strong data-i18n="thermal_research">Solar-thermal research:</strong> <span data-i18n="thermal_research_text">Thermal collector studies use different objectives and are not directly comparable with annual PV electricity.</span></p>
+          <p class="study-sources"><span data-i18n="sources">Sources:</span>
+            <a href="https://doi.org/10.1016/j.egyr.2017.10.003"
+               target="_blank" rel="noopener">Energy Reports 2018</a>,
+            <a href="https://doi.org/10.1007/s00339-018-1581-x"
+               target="_blank" rel="noopener">Applied Physics A 2018</a>,
+            <a href="https://benthamopen.com/contents/pdf/TOREJ/TOREJ-2-52.pdf"
+               target="_blank" rel="noopener">Ben Slama 2009</a>.
+          </p>
+        </div>
+      </details>
+
+      <section id="production-panel" class="production-panel"
+               aria-labelledby="production-title">
+        <div class="production-heading">
+          <div>
+            <p class="eyebrow" data-i18n="performance_tracking">Performance tracking</p>
+            <h3 id="production-title" data-i18n="actual_vs_estimated">Actual vs estimated</h3>
+          </div>
+          <div class="production-actions">
+            <input id="production-file" class="sr-only" type="file"
+                   accept=".csv,text/csv">
+            <button id="production-import-button" class="button secondary"
+                    type="button" data-i18n="import_production">Import CSV</button>
+            <button id="production-clear-button"
+                    class="button secondary hidden" type="button"
+                    data-i18n="clear_production">Clear data</button>
+          </div>
+        </div>
+        <p id="production-status" class="muted"
+           data-i18n="production_empty">Import inverter production to compare performance.</p>
+        <div id="production-summary" class="production-summary hidden">
+          <article>
+            <span data-i18n="actual_energy">Actual energy</span>
+            <strong id="production-actual">—</strong>
+          </article>
+          <article>
+            <span data-i18n="estimated_energy">Estimated energy</span>
+            <strong id="production-estimated">—</strong>
+          </article>
+          <article>
+            <span data-i18n="variance">Variance</span>
+            <strong id="production-variance">—</strong>
+          </article>
+          <article>
+            <span data-i18n="coverage">Coverage</span>
+            <strong id="production-coverage">—</strong>
+          </article>
+        </div>
+        <div id="production-chart" class="production-chart hidden"
+             aria-label="Actual and estimated monthly production chart"></div>
+        <details id="production-table-details" class="production-table-details hidden">
+          <summary data-i18n="monthly_values">Monthly values</summary>
+          <div id="production-table" class="table-scroll" tabindex="0"></div>
+        </details>
+        <p class="hint" data-i18n="production_csv_format">CSV columns: date, actual_kwh.</p>
+      </section>
+
+      <div class="visual-grid">
+        <article class="chart-card">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow" data-i18n="orientation_landscape">Orientation landscape</p>
+              <h3 data-i18n="energy_orientation">Energy by orientation</h3>
+            </div>
+            <span class="legend"><i></i><span data-i18n="higher_yield">Higher yield</span></span>
+          </div>
+          <div class="canvas-scroll">
+            <canvas id="heatmap" width="900" height="390"
+                    aria-label="Tilt and azimuth annual energy heatmap"></canvas>
+          </div>
+          <p class="hint" data-i18n="south_ring">South = 180°. Ring = optimum.</p>
+          <details>
+            <summary data-i18n="heatmap_values">Heatmap values</summary>
+            <div id="heatmap-table" class="table-scroll" tabindex="0"></div>
+          </details>
+        </article>
+
+        <article class="chart-card">
+          <p class="eyebrow" data-i18n="seasonal_production">Seasonal production</p>
+          <h3 id="monthly-title" data-i18n="monthly_energy">Monthly AC energy</h3>
+          <div id="monthly-chart" class="monthly-chart"
+               aria-label="Monthly AC energy bar chart"></div>
+        </article>
+        <article class="chart-card loss-card">
+          <p class="eyebrow" data-i18n="loss_profile">Engineering loss profile</p>
+          <h3 id="performance-ratio-label" data-i18n="performance_ratio">Estimated performance ratio</h3>
+          <strong id="performance-ratio" class="performance-ratio">—</strong>
+          <p class="hint" data-i18n="loss_profile_help">Configured loss assumptions applied to the energy model.</p>
+          <div id="loss-chart" class="loss-chart" aria-label="Engineering loss assumptions"></div>
+        </article>
+      </div>
+
+      <div class="detail-grid">
+        <details>
+          <summary data-i18n="comparison">Comparison</summary>
+          <div id="timing-details"></div>
+        </details>
+        <details>
+          <summary data-i18n="assumptions">Assumptions</summary>
+          <ul id="limitations"></ul>
+        </details>
+        <details>
+          <summary data-i18n="technical_data">Technical data</summary>
+          <pre id="provenance"></pre>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="wrap">
+    <p><span data-i18n="footer">Planning estimate. Confirm shading, structure and electrical design on site.</span>
+      <a href="/privacy.html" data-i18n="privacy">Privacy</a></p>
+  </footer>
+  <dialog id="ios-install-dialog" class="install-dialog">
+    <form method="dialog">
+      <div>
+        <p class="eyebrow" data-i18n="install_iphone">Install on iPhone</p>
+        <h2 data-i18n="install_steps_title">Add Solarna to Home Screen</h2>
+      </div>
+      <ol>
+        <li data-i18n="install_step_1">Open this page in Safari.</li>
+        <li data-i18n="install_step_2">Tap Share.</li>
+        <li data-i18n="install_step_3">Tap Add to Home Screen, then Add.</li>
+      </ol>
+      <button class="button primary" value="close" data-i18n="done">Done</button>
+    </form>
+  </dialog>
+  <script src="/config.js?v=44"></script>
+  <script src="/i18n.js?v=44"></script>
+  <script src="/supabase-client.js?v=44"></script>
+  <script src="/system-config.js?v=44"></script>
+  <script src="/result-summary.js?v=44"></script>
+  <script src="/install-support.js?v=44"></script>
+  <script src="/cloud-storage.js?v=44"></script>
+  <script src="/app.js?v=44" defer></script>
+</body>
+</html>

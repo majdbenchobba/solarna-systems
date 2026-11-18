@@ -1,0 +1,88 @@
+name: solarna-pv
+
+services:
+  solarna:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - solarna-app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8765"
+      - --cache-dir
+      - /data/cache
+      - --output-dir
+      - /data/reports
+      - --sample-report
+      - /app/sample/sfax.json
+      - --android-apk
+      - /app/downloads/Solarna-android.apk
+      - --ios-project
+      - /app/downloads/Solarna-iOS-project.zip
+    environment:
+      SOLARNA_ALLOWED_ORIGINS: "capacitor://localhost,https://localhost,https://${SOLARNA_DOMAIN:?Set SOLARNA_DOMAIN}"
+      SOLARNA_SUPABASE_URL: "${SOLARNA_SUPABASE_URL:?Set SOLARNA_SUPABASE_URL}"
+      SOLARNA_SUPABASE_PUBLISHABLE_KEY: "${SOLARNA_SUPABASE_PUBLISHABLE_KEY:?Set SOLARNA_SUPABASE_PUBLISHABLE_KEY}"
+      SOLARNA_AUTHORIZED_EMAILS: "${SOLARNA_AUTHORIZED_EMAILS:?Set SOLARNA_AUTHORIZED_EMAILS}"
+    expose:
+      - "8765"
+    volumes:
+      - solarna-cache:/data/cache
+      - solarna-reports:/data/reports
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 768m
+    cpus: 1.5
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/api/health', timeout=3).read()"
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.9.1
+    command:
+      - tunnel
+      - --no-autoupdate
+      - run
+      - --token-file
+      - /run/secrets/cloudflare_tunnel_token
+    depends_on:
+      solarna:
+        condition: service_healthy
+    network_mode: "service:solarna"
+    secrets:
+      - cloudflare_tunnel_token
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 128m
+    cpus: 0.5
+    restart: unless-stopped
+
+volumes:
+  solarna-cache:
+  solarna-reports:
+
+secrets:
+  cloudflare_tunnel_token:
+    file: "${SOLARNA_TUNNEL_TOKEN_FILE:?Set SOLARNA_TUNNEL_TOKEN_FILE}"

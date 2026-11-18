@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" role="img" aria-labelledby="title">
+  <title id="title">Solarna Systems solar engineering mark</title>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 30a21 21 0 0 1 42 0" fill="#f5b632" stroke="#f5b632" stroke-width="3"/>
+    <path d="M36 6v7M18 13l5 6M54 13l-5 6M10 25l8 2M62 25l-8 2" stroke="#f5b632" stroke-width="3"/>
+    <path d="M14 34h39l-7 24H7z" fill="#0d6670" stroke="#ffffff" stroke-width="2"/>
+    <path d="M21 34l-5 24M34 34l-3 24M47 34l-5 24M10 46h39" stroke="#8ed8e8" stroke-width="1.8"/>
+    <path d="M53 37h8l4-4M50 46h9l5 5M48 54h7l4 5" stroke="#61c5e8" stroke-width="2"/>
+    <circle cx="66" cy="31" r="2.5" fill="#f5b632" stroke="#ffffff" stroke-width="1.5"/>
+    <circle cx="66" cy="52" r="2.5" fill="#61c5e8" stroke="#ffffff" stroke-width="1.5"/>
+    <circle cx="61" cy="61" r="2.5" fill="#61c5e8" stroke="#ffffff" stroke-width="1.5"/>
+  </g>
+</svg>

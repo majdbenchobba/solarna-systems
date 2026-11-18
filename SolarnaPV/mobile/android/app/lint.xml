@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconDipSize" severity="ignore" />
+    <issue id="IconDuplicatesConfig" severity="ignore" />
+    <issue id="IconLocation" severity="ignore" />
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/values/styles.xml" />
+        <ignore path="src/main/res/xml/config.xml" />
+    </issue>
+</lint>

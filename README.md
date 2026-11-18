@@ -12,20 +12,6 @@ Majd Ben Chobba.
 *Public HMI prototype, captured 24 September 2026. All displayed telemetry is
 simulated. It is not connected to field equipment and sends no plant commands.*
 
-## Explore a concrete example
-
-The [solar operations HMI](https://solarnasystems.com/samples/solar-operations-hmi.html)
-demonstrates an operator workflow:
-
-1. Read PV power, daily energy, grid exchange, and equipment state.
-2. Switch between normal operation, an inverter alarm, and communications loss.
-3. Compare the alarm, event history, and data-quality indicators.
-
-The website also provides an
-[illustrative rooftop PV design](https://solarnasystems.com/samples/commercial-rooftop-pv-demo.html)
-and its [single-line drawing](https://solarnasystems.com/samples/commercial-rooftop-pv-sld.html).
-These are capability samples, not client projects or construction documents.
-
 ## Engineering and delivery
 
 - Solar PV studies, electrical system design, equipment schedules, and documentation.
@@ -36,11 +22,24 @@ A project moves from assessment and an agreed scope through implementation,
 review, and handover. [Discuss a project](https://solarnasystems.com/#contact)
 with the required output, equipment, and timeline.
 
-## Public applications and source
+## SolarnaPV
 
-[SolarnaPV](https://pv.solarnasystems.com/) provides a public interface for PV
-site analysis and production planning; its implementation remains private.
-[Solara](https://usesolara.pages.dev/) is the separate software-workspace product.
+[SolarnaPV](https://pv.solarnasystems.com/) is a PV site-analysis and production
+planning application. Its source, documentation, mobile shells, and offline tests
+are in [`SolarnaPV/`](SolarnaPV/README.md). The MIT license in that directory
+covers the SolarnaPV application and its documentation. It does not license the
+company showcase artwork in `assets/` or grant rights to the Solarna Systems
+name or marks.
 
-This repository is a business and engineering showcase. Client records,
-deployment configuration, and proprietary implementation are not published here.
+The model estimates fixed-panel energy from PVGIS weather data. It is a research
+and planning tool, not a certified roof design or a substitute for site survey,
+structural review, or field validation. Read the
+[model assumptions and validation status](SolarnaPV/README.md#model-and-assumptions)
+before using its results.
+
+## Other work
+
+[Solara](https://usesolara.pages.dev/) is a separate software-workspace product.
+The [solar operations HMI](https://solarnasystems.com/samples/solar-operations-hmi.html)
+and [illustrative rooftop design](https://solarnasystems.com/samples/commercial-rooftop-pv-demo.html)
+are capability samples, not client projects or construction documents.

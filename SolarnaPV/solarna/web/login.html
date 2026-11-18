@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#073b41">
+  <link rel="icon" href="/favicon.svg?v=44" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png?v=44">
+  <link rel="stylesheet" href="/app.css?v=44">
+  <title>Login · Solarna Systems</title>
+</head>
+<body class="auth-page web-shell">
+  <main class="auth-shell">
+    <section class="login-card" aria-labelledby="login-title">
+      <a class="auth-brand" href="/" aria-label="Solarna Systems">
+        <img src="/solarna-mark.svg?v=44" alt="" width="52" height="52">
+        <span>Solarna Systems</span>
+      </a>
+      <label class="auth-language">
+        <span data-i18n="language">Language</span>
+        <select data-language-select>
+          <option value="en" data-i18n="language_en">English</option>
+          <option value="fr" data-i18n="language_fr">Français</option>
+          <option value="ar" data-i18n="language_ar">العربية</option>
+        </select>
+      </label>
+      <div>
+        <p class="eyebrow">Solarna PV</p>
+        <h1 id="login-title" data-i18n="sign_in">Sign in</h1>
+        <p class="muted" data-i18n="sign_in_text">Access the Solarna PV planning application.</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <label class="server-url-field">
+          <span data-i18n="server_url">Server URL</span>
+          <input id="native-api-url" type="url" inputmode="url"
+                 placeholder="https://pv.solarnasystems.com" autocomplete="url">
+        </label>
+        <label>
+          <span data-i18n="email">Email</span>
+          <input id="login-email" type="email" maxlength="254"
+                 autocomplete="username" inputmode="email" required autofocus>
+        </label>
+        <label>
+          <span data-i18n="password">Password</span>
+          <input id="login-password" type="password" minlength="8" maxlength="512"
+                 autocomplete="current-password" required>
+        </label>
+        <button id="native-connect-button" class="button primary" type="submit">
+          <span data-i18n="log_in">Log in</span>
+        </button>
+      </form>
+      <button id="forgot-password-button" class="auth-link-button" type="button">
+        <span data-i18n="forgot_password">Forgot password?</span>
+      </button>
+      <p id="login-status" class="hint" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="/config.js?v=44"></script>
+  <script src="/i18n.js?v=44"></script>
+  <script src="/supabase-client.js?v=44"></script>
+  <script src="/login.js?v=44" defer></script>
+</body>
+</html>
