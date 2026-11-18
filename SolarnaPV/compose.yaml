@@ -1,0 +1,15 @@
+services:
+  solarna:
+    build: .
+    ports:
+      - "8765:8080"
+    environment:
+      SOLARNA_ALLOWED_ORIGINS: "capacitor://localhost,https://localhost"
+    volumes:
+      - solarna-cache:/data/cache
+      - solarna-reports:/data/reports
+    restart: unless-stopped
+
+volumes:
+  solarna-cache:
+  solarna-reports:

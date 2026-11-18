@@ -1,0 +1,35 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/SolarnaPV"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    groups:
+      dependency-updates:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "*"
+  - package-ecosystem: "npm"
+    directory: "/SolarnaPV/mobile"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    groups:
+      dependency-updates:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    groups:
+      dependency-updates:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "*"

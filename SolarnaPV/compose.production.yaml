@@ -1,0 +1,42 @@
+name: solarna
+
+services:
+  solarna:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SOLARNA_ALLOWED_ORIGINS: "capacitor://localhost,https://localhost,https://${SOLARNA_DOMAIN:?Set SOLARNA_DOMAIN}"
+      SOLARNA_SUPABASE_URL: "${SOLARNA_SUPABASE_URL:?Set SOLARNA_SUPABASE_URL}"
+      SOLARNA_SUPABASE_PUBLISHABLE_KEY: "${SOLARNA_SUPABASE_PUBLISHABLE_KEY:?Set SOLARNA_SUPABASE_PUBLISHABLE_KEY}"
+      SOLARNA_AUTHORIZED_EMAILS: "${SOLARNA_AUTHORIZED_EMAILS:?Set SOLARNA_AUTHORIZED_EMAILS}"
+    expose:
+      - "8080"
+    volumes:
+      - solarna-cache:/data/cache
+      - solarna-reports:/data/reports
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.11.4-alpine
+    depends_on:
+      solarna:
+        condition: service_healthy
+    environment:
+      SOLARNA_DOMAIN: "${SOLARNA_DOMAIN:?Set SOLARNA_DOMAIN}"
+      SOLARNA_ACME_EMAIL: "${SOLARNA_ACME_EMAIL:?Set SOLARNA_ACME_EMAIL}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+
+volumes:
+  solarna-cache:
+  solarna-reports:
+  caddy-data:
+  caddy-config:

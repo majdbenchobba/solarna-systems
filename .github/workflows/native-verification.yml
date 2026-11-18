@@ -1,0 +1,76 @@
+name: Native verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e .
+        working-directory: SolarnaPV
+      - run: python -m unittest discover -s tests -q
+        working-directory: SolarnaPV
+
+  android:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: SolarnaPV/mobile/package-lock.json
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: npm ci
+        working-directory: SolarnaPV/mobile
+      - run: npm run test:dependencies
+        working-directory: SolarnaPV/mobile
+      - run: ./mobile/build-android.ps1
+        working-directory: SolarnaPV
+        shell: pwsh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: solarna-android-debug
+          path: SolarnaPV/outputs/mobile/Solarna-android-debug.apk
+          if-no-files-found: error
+
+  ios-simulator:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: SolarnaPV/mobile/package-lock.json
+      - run: npm ci
+        working-directory: SolarnaPV/mobile
+      - run: npm run test:dependencies
+        working-directory: SolarnaPV/mobile
+      - run: bash mobile/build-ios-simulator.sh
+        working-directory: SolarnaPV
+      - run: npm test
+        working-directory: SolarnaPV/mobile
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: solarna-ios-simulator
+          path: SolarnaPV/outputs/deliverables/Solarna-iOS-simulator.zip
+          if-no-files-found: error
